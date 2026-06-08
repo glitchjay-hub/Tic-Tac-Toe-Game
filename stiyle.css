@@ -1,0 +1,129 @@
+:root{
+  --bg-light: #f2f3f7;
+  --panel: #ffffff;
+  --board-bg: #ffffff;
+  --grid-line: #d1d5db;
+  --cell-bg: #f9fafb;
+  --x-color:#2563eb;     /* Blue */
+  --o-color:#f97316;     /* Orange */
+  --text-dark:#1f2937;
+  --muted:#6b7280;
+  --accent:#3b82f6;
+  --win-bg:#e0f2fe;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: 'Inter', sans-serif;
+  background: var(--bg-light);
+  color: var(--text-dark);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+}
+
+.app{
+  width:100%;
+  max-width:500px;
+  background: var(--panel);
+  border-radius:16px;
+  padding:24px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.07);
+  border: 1px solid #e5e7eb;
+}
+
+header h1{margin:0;font-size:26px;color:var(--text-dark)}
+.subtitle{margin-top:6px;color:var(--muted);font-size:14px}
+
+.controls{
+  display:flex;
+  justify-content:flex-end;
+  margin:12px 0;
+}
+
+.restart{
+  padding:10px 16px;
+  border-radius:8px;
+  background:var(--accent);
+  color:white;
+  border:none;
+  font-weight:600;
+  cursor:pointer;
+  transition:0.15s;
+}
+.restart:hover{
+  background:#1d4ed8;
+}
+
+.board-wrap{
+  display:flex;
+  justify-content:center;
+  margin:10px 0;
+}
+
+.board{
+  width:320px;
+  height:320px;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  grid-template-rows:repeat(3,1fr);
+  background: var(--board-bg);
+  border-radius:12px;
+  overflow:hidden;
+  border:2px solid var(--grid-line);
+}
+
+.cell{
+.cell{
+  border:1px solid var(--grid-line);
+  background: #7dd3fc;     /* bright sky blue */
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:54px;
+  cursor:pointer;
+  transition:0.15s;
+}
+
+}
+.cell:hover{
+  background:#bae6fd;
+}
+.cell.taken{
+  cursor:default;
+}
+
+.cell.x{
+  color: var(--x-color);
+  font-weight:800;
+}
+.cell.o{
+  color: var(--o-color);
+  font-weight:800;
+}
+
+.cell.win{
+  background: var(--win-bg);
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+}
+
+.status-wrap{text-align:center;margin-top:16px}
+.status{
+  background:#eef2ff;
+  padding:10px 16px;
+  border-radius:50px;
+  color:var(--text-dark);
+  display:inline-block;
+  font-weight:600;
+  border:1px solid #dbeafe;
+}
+
+.footer{
+  margin-top:16px;
+  text-align:center;
+  color:var(--muted);
+  font-size:12px;
+}

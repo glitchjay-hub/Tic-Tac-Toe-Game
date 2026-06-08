@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Tic-Tac-Toe — 2 Players (Fixed Grid)</title>
+  <style>
+    :root{
+      --bg:#071023;
+      --panel:#081426;
+      --muted:#9aa8bb;
+      --accent:#06b6d4;
+      --x-color:#0ea5e9;
+      --o-color:#fb923c;
+      --grid-line:#0f1724;
+      --cell-bg: #071829;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg, var(--bg) 0%, #05243a 100%);
+      color:#e6eef6;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+    }
+
+    .app{
+      width:100%;
+      max-width:500px;
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.04));
+      border-radius:12px;
+      padding:18px;
+      box-shadow: 0 10px 40px rgba(2,6,23,0.6);
+      border: 1px solid rgba(255,255,255,0.03);
+    }
+
+    header h1{margin:0;font-size:24px}
+    .subtitle{margin-top:6px;color:var(--muted);font-size:13px}
+
+    .controls{display:flex;justify-content:flex-end;align-items:center;margin:12px 0}
+    .restart{
+      padding:8px 12px;border-radius:8px;border:none;background:var(--accent);color:#042027;cursor:pointer;font-weight:700;
+    }
+    .restart:active{transform:translateY(1px)}
+
+    .board-wrap{display:flex;justify-content:center;margin:8px 0}
+    /* Use a container with thick background lines to simulate clear grid */
+    .board{
+      width:320px;
+      max-width:90vw;
+      height:320px;
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      grid-template-rows:repeat(3,1fr);
+      gap:0; /* no gap — borders create lines */
+      background:
+        linear-gradient(to right, var(--grid-line) 0 0) , 
+        linear-gradient(to bottom, var(--grid-line) 0 0);
+      /* We'll draw lines using cell borders for consistent look */
+      border-radius:12px;
+      overflow:hidden;
+    }
+
+    .cell{
+      -webkit-appearance:none;
+      appearance:none;
+      border: 2px solid var(--grid-line);
+      background: var(--cell-bg);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:56px;
+      color:var(--muted);
+      cursor:pointer;
+      user-select:none;
+      padding:0;
+      margin:0;
+      line-height:1;
+      transition:background .12s, transform .08s;
+    }
+
+    
+
+    .cell:hover{ transform: scale(1.03); filter:brightness(1.05); }
+    .cell.taken{ cursor:default; opacity:0.98; transform:none; }
+
+    /* X and O colors */
+    .cell.x { color: var(--x-color); font-weight:800; text-shadow: 0 2px 12px rgba(14,165,233,0.08); }
+    .cell.o { color: var(--o-color); font-weight:700; text-shadow: 0 2px 12px rgba(251,146,60,0.08); }
+
+    /* winning effect */
+    .cell.win { background: linear-gradient(90deg, rgba(14,165,233,0.05), rgba(251,146,60,0.04)); box-shadow: 0 6px 20px rgba(2,6,23,0.36); }
+
+    .status-wrap{margin-top:14px;text-align:center;display:flex;justify-content:center;gap:12px;align-items:center}
+    .status{
+      padding:8px 12px;border-radius:999px;background:rgba(255,255,255,0.02);color:var(--muted);font-weight:600;
+    }
+    .badge { padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.03); color:var(--muted); font-weight:700; display:inline-flex; align-items:center; gap:8px; }
+    .badge .dot { width:10px;height:10px;border-radius:50%; display:inline-block; }
+
+    .dot.x { background: var(--x-color); box-shadow:0 4px 12px rgba(14,165,233,0.12); }
+    .dot.o { background: var(--o-color); box-shadow:0 4px 12px rgba(251,146,60,0.12); }
+
+    .footer{margin-top:12px;text-align:center;color:var(--muted);font-size:12px}
+
+    @media (max-width:420px){
+      .board{width:260px;height:260px}
+      .cell{font-size:44px}
+      header h1{font-size:20px}
+    }
+
+    /* Accessibility focus ring */
+    .cell:focus { outline: 3px solid rgba(6,182,212,0.12); outline-offset: -3px; }
+    button { -webkit-tap-highlight-color: rgba(0,0,0,0); }
+  </style>
+</head>
+<body>
+  <main class="app" role="main">
+    <header>
+      <h1>Tic-Tac-Toe</h1>
+      <p class="subtitle">Two players — local on same device</p>
+    </header>
+
+    <section class="controls" aria-hidden="false">
+      <div class="options">
+        <button id="restartBtn" class="restart" type="button">Restart</button>
+      </div>
+    </section>
+
+    <section class="board-wrap">
+      <div id="board" class="board" role="grid" aria-label="Tic Tac Toe board">
+        <!-- cells created by JS -->
+      </div>
+    </section>
+
+    <section class="status-wrap" aria-live="polite">
+      <div id="status" class="status">
+        <span class="badge"><span id="turnDot" class="dot x"></span> Turn: <strong id="turnText" style="margin-left:6px">X</strong></span>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <small>Built with HTML, CSS & JavaScript — 2-player local mode.</small>
+    </footer>
+  </main>
+
+  <script>
+    (function(){
+      'use strict';
+      const boardEl = document.getElementById('board');
+      const statusText = document.getElementById('turnText');
+      const turnDot = document.getElementById('turnDot');
+      const restartBtn = document.getElementById('restartBtn');
+
+      let board = Array(9).fill(null);
+      let currentPlayer = 'X';
+      let gameActive = true;
+
+      const wins = [
+        [0,1,2],[3,4,5],[6,7,8],
+        [0,3,6],[1,4,7],[2,5,8],
+        [0,4,8],[2,4,6]
+      ];
+
+      function init(){
+        board = Array(9).fill(null);
+        currentPlayer = 'X';
+        gameActive = true;
+        updateTurnUI();
+        render();
+      }
+
+      function render(){
+        boardEl.innerHTML = '';
+        // create 9 cells
+        for(let i=0;i<9;i++){
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          // ensure perfect square across browsers: we let grid container enforce size
+          btn.className = 'cell' + (board[i] ? ' taken ' + board[i].toLowerCase() : '');
+          btn.setAttribute('data-index', i);
+          btn.setAttribute('role', 'gridcell');
+          btn.setAttribute('aria-label', 'Cell ' + (i+1) + (board[i] ? (', ' + board[i]) : ''));
+          btn.textContent = board[i] ? board[i] : '';
+          btn.addEventListener('click', onCellClick);
+          btn.addEventListener('keydown', function(e){
+            if(e.key === 'Enter' || e.key === ' '){
+              e.preventDefault();
+              onCellClick(e);
+            }
+          });
+          boardEl.appendChild(btn);
+        }
+      }
+
+      function onCellClick(e){
+        if(!gameActive) return;
+        const idx = Number(e.currentTarget.getAttribute('data-index'));
+        if(board[idx]) return;
+        board[idx] = currentPlayer;
+        afterMove();
+      }
+
+      function afterMove(){
+        render();
+        const winner = checkWinner();
+        if(winner){
+          finish(winner);
+          return;
+        }
+        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+        updateTurnUI();
+      }
+
+      function checkWinner(){
+        for(const combo of wins){
+          const [a,b,c] = combo;
+          if(board[a] && board[a] === board[b] && board[a] === board[c]) return board[a];
+        }
+        if(board.every(cell => cell)) return 'tie';
+        return null;
+      }
+
+      function finish(result){
+        gameActive = false;
+        if(result === 'tie'){
+          statusText.textContent = "It's a tie!";
+          turnDot.className = 'dot';
+        } else {
+          statusText.textContent = result + " wins!";
+          turnDot.className = 'dot ' + result.toLowerCase();
+          highlightWin(result);
+        }
+      }
+
+      function highlightWin(winner){
+        // find winning combo and add .win to those cells
+        const nodes = boardEl.querySelectorAll('.cell');
+        for(const combo of wins){
+          const [a,b,c] = combo;
+          if(board[a] === winner && board[b] === winner && board[c] === winner){
+            [a,b,c].forEach(i => nodes[i].classList.add('win'));
+            break;
+          }
+        }
+      }
+
+      function updateTurnUI(){
+        statusText.textContent = currentPlayer;
+        turnDot.className = 'dot ' + currentPlayer.toLowerCase();
+      }
+
+      restartBtn.addEventListener('click', () => {
+        init();
+        // autofocus first cell
+        const first = boardEl.querySelector('.cell');
+        if(first) first.focus();
+      });
+
+      // init
+      init();
+      // expose for debug if needed
+      window.__tic = { state: () => ({ board: board.slice(), currentPlayer, gameActive }) };
+    })();
+  </script>
+</body>
+</html>
